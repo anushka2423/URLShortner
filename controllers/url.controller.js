@@ -4,15 +4,25 @@ import { URL } from "../models/url.model.js";
 export async function handleGenerateShortUrl(req, res) {
     const body = req.body;
     if(!body.url) return res.status(400).json({error: "URL is required"});
+
+    const existingUrl = await URL.findOne({redirectUrl: body.url});
+
+    if(existingUrl) {
+        return res.redirect(existingUrl.redirectUrl);
+    };
+
     const shortId = shortid(8);
     await URL.create({ 
         shortId : shortId,
         redirectUrl: body.url,
-        visitHistory : []
+        visitHistory : [],
+        generatedBy: req.user._id
     });
 
-    return res.status(201).json({
-        id: shortId
+    const allurls = await URL.find({});
+    return res.render("home", {
+        id: shortId,
+        urls: allurls
     });
 };
 
