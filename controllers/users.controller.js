@@ -25,6 +25,8 @@ export async function handleUserLogin(req, res) {
     const token = setUser(user);
     res.cookie("token", token);
 
+    // res.json({ token });
+
     if(!user)   
         return res.render("login", {error: 'User not found.'});
 
