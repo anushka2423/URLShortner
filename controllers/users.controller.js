@@ -1,5 +1,4 @@
 import { User } from "../models/users.model.js";
-import {v4 as uuidv4} from "uuid";
 import { setUser } from "../service/auth.js";
 
 export async function handleCreateUser(req, res) {
@@ -23,9 +22,8 @@ export async function handleUserLogin(req, res) {
 
     const user = await User.findOne({email, password});
 
-    const sessionId = uuidv4();
-    setUser(sessionId, user);
-    res.cookie("uuid", sessionId);
+    const token = setUser(user);
+    res.cookie("token", token);
 
     if(!user)   
         return res.render("login", {error: 'User not found.'});
